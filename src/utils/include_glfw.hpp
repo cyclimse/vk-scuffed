@@ -2,6 +2,7 @@
 #define INCLUDE_GLFW_HPP
 
 #define GLFW_INCLUDE_NONE
+#define GLFW_INCLUDE_VULKAN
 #include <GLFW/glfw3.h>
 
 #endif // INCLUDE_GLFW_HPP

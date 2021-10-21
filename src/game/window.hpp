@@ -5,6 +5,7 @@
 #include <string_view>
 
 #include "../utils/include_glfw.hpp"
+#include "../utils/include_vulkan.hpp"
 
 struct WindowPtrDestroyer {
   void operator()(GLFWwindow *window_ptr) { glfwDestroyWindow(window_ptr); }
@@ -16,6 +17,7 @@ class Window {
          std::uint32_t const initial_height = 600u);
   bool ShouldClose() const;
   void Close() const;
+  vk::SurfaceKHR CreateSurface(VkInstance instance) const;
 
  private:
   std::unique_ptr<GLFWwindow, WindowPtrDestroyer> window_ptr_;

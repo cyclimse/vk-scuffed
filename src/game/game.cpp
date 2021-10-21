@@ -1,6 +1,6 @@
 #include "game.hpp"
 
-Game::Game() : window_{this}, engine_{}, keys_pressed_{false} {}
+Game::Game() : window_{this}, engine_{&window_}, keys_pressed_{false} {}
 
 void Game::Run() {
   while (!window_.ShouldClose()) {

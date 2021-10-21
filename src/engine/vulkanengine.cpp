@@ -1,12 +1,16 @@
 #include "vulkanengine.hpp"
 
 #include <vector>
+#include <vulkan/vulkan_handles.hpp>
 
 #include "../utils/constants.hpp"
 #include "../utils/include_glfw.hpp"
 #include "vk_utils.hpp"
 
-VulkanEngine::VulkanEngine() { createInstance(); }
+VulkanEngine::VulkanEngine(Window const *window_ptr) : window_ptr_(window_ptr) {
+  createInstance();
+  createSurface();
+}
 
 void VulkanEngine::createInstance() {
   auto glfw_extension_count = 0u;
@@ -53,4 +57,9 @@ void VulkanEngine::createInstance() {
     messenger_ = instance_->createDebugUtilsMessengerEXTUnique(
         GetDebugUtilsMessengerCreateInfoStruct(), nullptr, dldi_);
   }
+}
+
+void VulkanEngine::createSurface() {
+  surface_ = vk::UniqueSurfaceKHR(window_ptr_->CreateSurface(instance_.get()),
+                                  instance_.get());
 }

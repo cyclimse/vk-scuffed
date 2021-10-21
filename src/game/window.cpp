@@ -1,5 +1,7 @@
 #include "window.hpp"
 
+#include <GLFW/glfw3.h>
+
 #include "../utils/constants.hpp"
 #include "callbacks.hpp"
 #include "game.hpp"
@@ -29,4 +31,13 @@ bool Window::ShouldClose() const {
 
 void Window::Close() const {
   glfwSetWindowShouldClose(window_ptr_.get(), GLFW_TRUE);
+}
+
+vk::SurfaceKHR Window::CreateSurface(VkInstance instance) const {
+  VkSurfaceKHR surface{};
+  if (glfwCreateWindowSurface(instance, window_ptr_.get(), nullptr, &surface) !=
+      VK_SUCCESS) {
+    throw std::runtime_error("Could not create surface!");
+  };
+  return {surface};
 }
