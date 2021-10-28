@@ -29,3 +29,37 @@ vk::DebugUtilsMessengerCreateInfoEXT GetDebugUtilsMessengerCreateInfoStruct() {
                                               .messageType = typeFlags,
                                               .pfnUserCallback = DebugCallBack};
 }
+
+bool IsDeviceSuitable(const vk::PhysicalDevice& device,
+                      const vk::SurfaceKHR& surface) {
+  auto const properties = device.getProperties();
+  auto const features = device.getFeatures();
+  auto const extensions = device.enumerateDeviceExtensionProperties();
+#ifndef NDEBUG
+  std::clog << "Evaluating suitability of device: " << properties.deviceName
+            << std::endl;
+#endif
+
+  for (auto const& required_extension : Constants::Engine::kDeviceExtensions) {
+    auto const result = std::find_if(
+        extensions.cbegin(), extensions.cend(),
+        [&](const vk::ExtensionProperties& extension) {
+          return std::strcmp(extension.extensionName, required_extension) == 0;
+        });
+    if (result == extensions.cend()) {
+#ifndef NDEBUG
+      std::clog << "Extension " << required_extension
+                << "was required but could not be found!" << std::endl;
+#endif
+      // A required extension could not be found.
+      return false;
+    }
+  }
+
+  SwapChainSupport support{device, surface};
+  QueueFamilyIndices indices{device, surface};
+
+  return support.HasRequiredSupport() && indices.IsComplete() &&
+         features.geometryShader &&
+         properties.deviceType == vk::PhysicalDeviceType::eDiscreteGpu;
+}

@@ -17,7 +17,10 @@ class Window {
          std::uint32_t const initial_height = 600u);
   bool ShouldClose() const;
   void Close() const;
+
+  // Vulkan related
   vk::SurfaceKHR CreateSurface(VkInstance instance) const;
+  vk::Extent2D GetExtent() const;
 
  private:
   std::unique_ptr<GLFWwindow, WindowPtrDestroyer> window_ptr_;

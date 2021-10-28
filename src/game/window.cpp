@@ -41,3 +41,10 @@ vk::SurfaceKHR Window::CreateSurface(VkInstance instance) const {
   };
   return {surface};
 }
+
+vk::Extent2D Window::GetExtent() const {
+  int width, height;
+  glfwGetFramebufferSize(window_ptr_.get(), &width, &height);
+  return {static_cast<std::uint32_t>(width),
+          static_cast<std::uint32_t>(height)};
+}
