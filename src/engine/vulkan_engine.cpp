@@ -1,5 +1,6 @@
 #include "vulkan_engine.hpp"
 
+#include <cstdlib>
 #include <set>
 #include <vector>
 
@@ -11,6 +12,9 @@ VulkanEngine::VulkanEngine(Window const *window_ptr) : window_ptr_(window_ptr) {
   createInstance();
   createSurface();
   pickPhysicalDevice();
+  createLogicalDevice();
+  createVmaAllocator();
+  createSwapChain();
 }
 
 void VulkanEngine::createInstance() {
@@ -112,4 +116,29 @@ void VulkanEngine::createLogicalDevice() {
 
   graphics_queue_ = device_->getQueue(indices.graphics_family.value(), 0);
   presentation_queue_ = device_->getQueue(indices.present_family.value(), 0);
+}
+
+void VulkanEngine::createVmaAllocator() {
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wmissing-field-initializers"
+  VmaAllocatorCreateInfo allocator_info{
+      .flags = {},
+      .physicalDevice = physical_device_,
+      .device = device_.get(),
+      .instance = instance_.get(),
+      .vulkanApiVersion = VK_API_VERSION_1_1,
+  };
+#pragma GCC diagnostic pop
+
+  VmaAllocator allocator;
+  vmaCreateAllocator(&allocator_info, &allocator);
+  allocator_.reset(allocator);
+}
+
+void VulkanEngine::createSwapChain() {
+  wrapped_swap_chain_ = SwapChainWrapper{
+      surface_.get(),
+      device_.get(),
+      {physical_device_, surface_.get(), window_ptr_->GetExtent()},
+      {physical_device_, surface_.get()}};
 }

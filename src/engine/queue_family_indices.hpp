@@ -7,6 +7,8 @@ struct QueueFamilyIndices {
   std::optional<std::uint32_t> graphics_family;
   std::optional<std::uint32_t> present_family;
 
+  QueueFamilyIndices() = default;
+
   QueueFamilyIndices(const vk::PhysicalDevice& device,
                      const vk::SurfaceKHR& surface);
 

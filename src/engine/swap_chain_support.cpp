@@ -1,10 +1,14 @@
 #include "swap_chain_support.hpp"
 
+#include <vulkan/vulkan_structs.hpp>
+
 SwapChainSupport::SwapChainSupport(const vk::PhysicalDevice& device,
-                                   const vk::SurfaceKHR& surface)
+                                   const vk::SurfaceKHR& surface,
+                                   const vk::Extent2D& actual_extent)
     : capabilities_{device.getSurfaceCapabilitiesKHR(surface)},
       formats_{device.getSurfaceFormatsKHR(surface)},
-      present_modes_{device.getSurfacePresentModesKHR(surface)} {};
+      present_modes_{device.getSurfacePresentModesKHR(surface)},
+      actual_extent_{actual_extent} {}
 
 vk::SurfaceFormatKHR SwapChainSupport::ChooseSwapSurfaceFormat() const {
   auto const result = std::find_if(
@@ -18,7 +22,7 @@ vk::SurfaceFormatKHR SwapChainSupport::ChooseSwapSurfaceFormat() const {
   } else {
     return formats_.front();
   }
-};
+}
 
 vk::PresentModeKHR SwapChainSupport::ChooseSwapPresentMode() const {
   auto const result = std::find_if(
@@ -35,21 +39,17 @@ vk::PresentModeKHR SwapChainSupport::ChooseSwapPresentMode() const {
   }
 }
 
-vk::Extent2D SwapChainSupport::ChooseSwapExtent(
-    vk::Extent2D actual_extent) const {
+vk::Extent2D SwapChainSupport::ChooseSwapExtent() const {
   if (capabilities_.currentExtent.width != UINT32_MAX) {
     // Window managers will set the currentExtent to UINT32_MAX if they allow
-    // us
-    // to change the resolution of the swap chain images from the resolution
+    // us to change the resolution of the swap chain images from the resolution
     // of the windows.
     return capabilities_.currentExtent;
   } else {
-    actual_extent.width =
-        std::clamp(actual_extent.width, capabilities_.minImageExtent.width,
-                   capabilities_.maxImageExtent.width);
-    actual_extent.height =
-        std::clamp(actual_extent.height, capabilities_.maxImageExtent.width,
-                   capabilities_.maxImageExtent.width);
-    return actual_extent;
+    return {
+        std::clamp(actual_extent_.width, capabilities_.minImageExtent.width,
+                   capabilities_.maxImageExtent.width),
+        std::clamp(actual_extent_.height, capabilities_.maxImageExtent.width,
+                   capabilities_.maxImageExtent.width)};
   }
-};
+}

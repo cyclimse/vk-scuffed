@@ -56,7 +56,7 @@ bool IsDeviceSuitable(const vk::PhysicalDevice& device,
     }
   }
 
-  SwapChainSupport support{device, surface};
+  SwapChainSupport support{device, surface, {}}; // Extent is not used
   QueueFamilyIndices indices{device, surface};
 
   return support.HasRequiredSupport() && indices.IsComplete() &&

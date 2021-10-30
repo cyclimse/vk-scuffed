@@ -1,3 +1,6 @@
+#ifndef VK_UTILS_HPP
+#define VK_UTILS_HPP
+
 #include <iostream>
 
 #include "../utils/constants.hpp"
@@ -13,3 +16,5 @@ vk::DebugUtilsMessengerCreateInfoEXT GetDebugUtilsMessengerCreateInfoStruct();
 
 bool IsDeviceSuitable(const vk::PhysicalDevice& device,
                       const vk::SurfaceKHR& surface);
+
+#endif  // VK_UTILS_HPP

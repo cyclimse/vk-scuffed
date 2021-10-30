@@ -35,12 +35,12 @@ find_package(Vulkan REQUIRED)
 find_package(glfw3 REQUIRED)
 
 #target_include_directories(game PRIVATE "libs/stb_image")
-#target_include_directories(game PRIVATE "libs/vma/src")
+target_include_directories(scuffedcraft PRIVATE "libs")
 
 # Precompiling headers achieves two things here:
 #   -- faster compilation times
 #   -- avoiding warning pollution from VMA
-# target_precompile_headers(scuffedcraft PRIVATE <vulkan/vulkan.hpp> [["vk_mem_alloc.h"]])
+target_precompile_headers(scuffedcraft PRIVATE [["vk_mem_alloc.h"]])
 # target_precompile_headers(scuffedcraft PRIVATE <vulkan/vulkan.hpp>)
 
 #find_package(SPIRV-Tools REQUIRED)
