@@ -1,12 +1,14 @@
 #ifndef CONSTANTS_HPP
 #define CONSTANTS_HPP
 
+#include <array>
 #include <cstdint>
 #include <string>
 #include <string_view>
 using namespace std::string_view_literals;
 
-#include "include_vulkan.hpp"
+#include <GLFW/glfw3.h>
+#include <vulkan/vulkan.h>
 
 namespace Constants {
 inline constexpr std::uint32_t kVersion{1u};

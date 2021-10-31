@@ -1,7 +1,7 @@
 #ifndef CALLBACKS_HPP
 #define CALLBACKS_HPP
 
-#include "../utils/include_glfw.hpp"
+#include <GLFW/glfw3.h>
 
 void keyCallBack(GLFWwindow *window, int key, int scancode, int action,
                  int mods);

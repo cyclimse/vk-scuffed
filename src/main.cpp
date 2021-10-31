@@ -1,4 +1,4 @@
-#include "utils/include_glfw.hpp"
+#include <GLFW/glfw3.h>
 
 #include "game/game.hpp"
 

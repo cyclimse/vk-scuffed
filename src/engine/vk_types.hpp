@@ -3,12 +3,12 @@
 
 #include <vk_mem_alloc.h>
 
-#include "../utils/include_vulkan.hpp"
+#include <vulkan/vulkan.hpp>
 
 struct AllocatedBuffer {
   vk::Buffer buffer;
-  VmaAllocation allocation;
-  VmaAllocator allocator;
+  VmaAllocation allocation = nullptr;
+  VmaAllocator allocator = nullptr;
 
   inline ~AllocatedBuffer() {
     if (allocation) {

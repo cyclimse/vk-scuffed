@@ -25,4 +25,5 @@ mkShell {
 
   # If it doesn’t get picked up through nix magic
   VULKAN_SDK = "${vulkan-validation-layers}/share/vulkan/explicit_layer.d";
+  LD_LIBRARY_PATH="/run/opengl-driver/lib:/run/opengl-driver-32/lib";
 }

@@ -14,9 +14,9 @@ add_subdirectory(src)
 
 set_property(TARGET scuffedcraft PROPERTY CXX_STANDARD 20)
 
-target_link_options(scuffedcraft PRIVATE
-    $<$<CONFIG:Debug>:-fsanitize=address>
-)
+# target_link_options(scuffedcraft PRIVATE
+#     $<$<CONFIG:Debug>:-fsanitize=address>
+# )
 
 target_compile_options(scuffedcraft PRIVATE
     $<$<CONFIG:Debug>:-Wall -Wextra -Wpedantic -Og>
@@ -31,8 +31,14 @@ add_custom_command(
 )
 
 find_package(Vulkan REQUIRED)
+target_compile_definitions(scuffedcraft PUBLIC -DVULKAN_HPP_NO_STRUCT_CONSTRUCTORS)
+target_compile_definitions(scuffedcraft PUBLIC -DVULKAN_HPP_NO_CONSTRUCTORS)
+
 # find_package(glm REQUIRED)
+
 find_package(glfw3 REQUIRED)
+target_compile_definitions(scuffedcraft PUBLIC -DGLFW_INCLUDE_NONE)
+
 
 #target_include_directories(game PRIVATE "libs/stb_image")
 target_include_directories(scuffedcraft PRIVATE "libs")

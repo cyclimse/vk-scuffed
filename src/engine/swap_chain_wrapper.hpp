@@ -1,7 +1,8 @@
 #ifndef SWAPCHAINWRAPPER_HPP
 #define SWAPCHAINWRAPPER_HPP
 
-#include "../utils/include_vulkan.hpp"
+#include <vulkan/vulkan.hpp>
+
 #include "queue_family_indices.hpp"
 #include "swap_chain_support.hpp"
 #include "vk_types.hpp"

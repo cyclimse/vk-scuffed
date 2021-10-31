@@ -1,7 +1,7 @@
 #ifndef SWAPCHAINSUPPORT_HPP
 #define SWAPCHAINSUPPORT_HPP
 
-#include "../utils/include_vulkan.hpp"
+#include <vulkan/vulkan.hpp>
 
 class SwapChainSupport {
  public:

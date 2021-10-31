@@ -4,8 +4,8 @@
 #include <memory>
 #include <string_view>
 
-#include "../utils/include_glfw.hpp"
-#include "../utils/include_vulkan.hpp"
+#include <GLFW/glfw3.h>
+#include <vulkan/vulkan.hpp>
 
 struct WindowPtrDestroyer {
   void operator()(GLFWwindow *window_ptr) { glfwDestroyWindow(window_ptr); }

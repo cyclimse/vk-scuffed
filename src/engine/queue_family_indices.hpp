@@ -1,7 +1,7 @@
 #ifndef QUEUEFAMILYINDICES_HPP
 #define QUEUEFAMILYINDICES_HPP
 
-#include "../utils/include_vulkan.hpp"
+#include <vulkan/vulkan.hpp>
 
 struct QueueFamilyIndices {
   std::optional<std::uint32_t> graphics_family;
