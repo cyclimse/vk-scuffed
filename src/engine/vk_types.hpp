@@ -2,6 +2,7 @@
 #include <vk_mem_alloc.h>
 
 #include <vulkan/vulkan.hpp>
+#include <vulkan/vulkan_handles.hpp>
 
 struct AllocatedBuffer {
   vk::Buffer buffer;
@@ -17,8 +18,8 @@ struct AllocatedBuffer {
 
 struct SwapChainFrame {
   vk::Image image;
-  vk::UniqueImageView image_view;
-  vk::UniqueFramebuffer frame_buffer;
+  vk::UniqueHandle<vk::ImageView, vk::DispatchLoaderDynamic> image_view;
+  vk::UniqueHandle<vk::Framebuffer, vk::DispatchLoaderDynamic> frame_buffer;
   AllocatedBuffer uniform_buffer;
   AllocatedBuffer storage_buffer;
   vk::CommandBuffer command_buffer;

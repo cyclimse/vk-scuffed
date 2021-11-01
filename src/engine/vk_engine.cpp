@@ -22,6 +22,9 @@ VulkanEngine::VulkanEngine(std::shared_ptr<sc::Config> const cfg,
   createLogicalDevice();
   createVmaAllocator();
   createSwapChain();
+  createImageViews();
+  createRenderPass();
+  createDescriptorSetLayout();
 }
 
 void VulkanEngine::createInstance() {
@@ -87,10 +90,10 @@ void VulkanEngine::pickPhysicalDevice() {
   for (const auto &device : devices) {
     if (IsDeviceSuitable(device, surface_.get())) {
       physical_device_ = device;
-#ifndef NDEBUG
-      std::clog << "Chose physical device: "
-                << physical_device_.getProperties().deviceName << std::endl;
-#endif
+      if (cfg_->is_debug) {
+        std::clog << "Chose physical device: "
+                  << physical_device_.getProperties().deviceName << std::endl;
+      }
       return;
     }
   }
@@ -207,4 +210,119 @@ void VulkanEngine::createSwapChain() {
 
   swap_chain_image_format_ = surface_format.format;
   swap_chain_image_extent_ = extent;
+}
+
+void VulkanEngine::createImageViews() {
+  for (std::size_t i = 0u; i < swap_chain_frames_.size(); i++) {
+    vk::ImageViewCreateInfo create_info{
+        .image = swap_chain_frames_[i].image,
+        .viewType = vk::ImageViewType::e2D,
+        .format = swap_chain_image_format_,
+        .subresourceRange = {
+            .aspectMask = vk::ImageAspectFlagBits::eColor,
+            .baseMipLevel = 0u,
+            .levelCount = 1u,
+            .baseArrayLayer = 0u,
+            .layerCount = 1u,
+        }};
+    swap_chain_frames_[i].image_view =
+        device_->createImageViewUnique(create_info, nullptr, dldi_);
+  }
+}
+
+void VulkanEngine::createRenderPass() {
+  // Color attachment
+  vk::AttachmentDescription color_attachment{
+      .format = swap_chain_image_format_,
+      .samples = vk::SampleCountFlagBits::e1,
+      .loadOp = vk::AttachmentLoadOp::eClear,
+      .storeOp = vk::AttachmentStoreOp::eStore,
+      .stencilLoadOp = vk::AttachmentLoadOp::eDontCare,
+      .stencilStoreOp = vk::AttachmentStoreOp::eDontCare,
+      .initialLayout = vk::ImageLayout::eUndefined,
+      .finalLayout = vk::ImageLayout::ePresentSrcKHR};
+
+  vk::AttachmentReference color_attachment_ref{};
+  color_attachment_ref.attachment = 0u;
+  color_attachment_ref.layout = vk::ImageLayout::eColorAttachmentOptimal;
+
+  // Depth attachment
+  vk::AttachmentDescription depth_attachment{};
+  depth_attachment.format = vk::Format::eD32Sfloat;
+  depth_attachment.samples = vk::SampleCountFlagBits::e1;
+  depth_attachment.loadOp = vk::AttachmentLoadOp::eClear;
+  depth_attachment.storeOp = vk::AttachmentStoreOp::eStore;
+  depth_attachment.stencilLoadOp = vk::AttachmentLoadOp::eClear;
+  depth_attachment.stencilStoreOp = vk::AttachmentStoreOp::eDontCare;
+  depth_attachment.initialLayout = vk::ImageLayout::eUndefined;
+  depth_attachment.finalLayout =
+      vk::ImageLayout::eDepthStencilAttachmentOptimal;
+
+  vk::AttachmentReference depth_attachment_ref{
+      .attachment = 1u,
+      .layout = vk::ImageLayout::eDepthStencilAttachmentOptimal,
+  };
+
+  // Subpasses
+  vk::SubpassDescription subpass{
+      .pipelineBindPoint = vk::PipelineBindPoint::eGraphics,
+      .colorAttachmentCount = 1u,
+      .pColorAttachments = &color_attachment_ref,
+      .pDepthStencilAttachment = &depth_attachment_ref,
+  };
+
+  vk::SubpassDependency dependency{
+      .srcSubpass = VK_SUBPASS_EXTERNAL,
+      .dstSubpass = 0u,
+      .srcStageMask = vk::PipelineStageFlagBits::eColorAttachmentOutput |
+                      vk::PipelineStageFlagBits::eEarlyFragmentTests,
+      .dstStageMask = vk::PipelineStageFlagBits::eColorAttachmentOutput |
+                      vk::PipelineStageFlagBits::eEarlyFragmentTests,
+      .dstAccessMask = vk::AccessFlagBits::eColorAttachmentWrite |
+                       vk::AccessFlagBits::eDepthStencilAttachmentWrite,
+  };
+
+  std::array<vk::AttachmentDescription, 2> attachments{color_attachment,
+                                                       depth_attachment};
+
+  vk::RenderPassCreateInfo create_info{
+      .flags = {},
+      .attachmentCount = static_cast<std::uint32_t>(attachments.size()),
+      .pAttachments = attachments.data(),
+      .subpassCount = 1u,
+      .pSubpasses = &subpass,
+      .dependencyCount = 1u,
+      .pDependencies = &dependency};
+
+  render_pass_ = device_->createRenderPassUnique(create_info, nullptr, dldi_);
+}
+
+void VulkanEngine::createDescriptorSetLayout() {
+  vk::DescriptorSetLayoutBinding ubo_layout_binding{
+      .binding = 0u,
+      .descriptorType = vk::DescriptorType::eUniformBuffer,
+      .descriptorCount = 1u,
+      .stageFlags = vk::ShaderStageFlagBits::eVertex,
+  };
+
+  vk::DescriptorSetLayoutCreateInfo layout_info{
+      .bindingCount = 1u,
+      .pBindings = &ubo_layout_binding,
+  };
+
+  uniform_descriptor_set_layout_ =
+      device_->createDescriptorSetLayoutUnique(layout_info, nullptr, dldi_);
+
+  vk::DescriptorSetLayoutBinding global_layout_binding{
+      .binding = 0u,
+      .descriptorType = vk::DescriptorType::eStorageBuffer,
+      .descriptorCount = 1u,
+      .stageFlags = vk::ShaderStageFlagBits::eVertex,
+  };
+
+  layout_info.bindingCount = 1u;
+  layout_info.pBindings = &global_layout_binding;
+
+  global_decriptor_set_layout_ =
+      device_->createDescriptorSetLayoutUnique(layout_info, nullptr, dldi_);
 }

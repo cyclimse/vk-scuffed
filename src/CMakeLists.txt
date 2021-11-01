@@ -1,6 +1,4 @@
-target_sources(scuffedcraft PRIVATE
-    sc_config.cpp
-)
+target_sources(scuffedcraft PRIVATE sc_config.cpp)
 
 add_subdirectory(game)
 target_include_directories(scuffedcraft PRIVATE game)

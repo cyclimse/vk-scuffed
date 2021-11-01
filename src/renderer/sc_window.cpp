@@ -7,10 +7,6 @@
 using namespace sc;
 
 Window::Window(vk::Extent2D resolution, std::string_view name, void *user_ptr) {
-  // GLFW Initialization
-  [[maybe_unused]] static auto once = (glfwInit(), true);
-  glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
-
   window_ptr_ =
       std::unique_ptr<GLFWwindow, WindowPtrDestroyer>{glfwCreateWindow(
           resolution.width, resolution.height, name.data(), nullptr, nullptr)};

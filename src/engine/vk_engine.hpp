@@ -4,6 +4,7 @@
 #include <vector>
 #include <vulkan/vulkan.hpp>
 #include <vulkan/vulkan_enums.hpp>
+#include <vulkan/vulkan_handles.hpp>
 #include <vulkan/vulkan_structs.hpp>
 
 #include "sc_config.hpp"
@@ -14,7 +15,11 @@ class VulkanEngine {
  public:
   VulkanEngine(std::shared_ptr<sc::Config> const cfg,
                sc::Window const *window_ptr);
-
+#ifdef __SANITIZE_ADDRESS__
+  // This looks terrible but seem to be necessary to avoid warning pollution
+  // from ASAN with NVDIA proprietary drivers
+  inline ~VulkanEngine() { instance_.release(); }
+#endif
  private:
   void createInstance();
   void createSurface();
@@ -22,7 +27,9 @@ class VulkanEngine {
   void createLogicalDevice();
   void createVmaAllocator();
   void createSwapChain();
+  void createImageViews();
   void createRenderPass();
+  void createDescriptorSetLayout();
 
   std::shared_ptr<sc::Config> const cfg_;
   sc::Window const *window_ptr_;
@@ -44,4 +51,15 @@ class VulkanEngine {
   std::vector<SwapChainFrame> swap_chain_frames_;
   vk::Extent2D swap_chain_image_extent_;
   vk::Format swap_chain_image_format_;
+
+  // Render pass
+  vk::UniqueHandle<vk::RenderPass, vk::DispatchLoaderDynamic> render_pass_;
+
+  // Layout descriptors
+  vk::UniqueHandle<vk::DescriptorSetLayout, vk::DispatchLoaderDynamic>
+      uniform_descriptor_set_layout_;
+  vk::UniqueHandle<vk::DescriptorSetLayout, vk::DispatchLoaderDynamic>
+      global_decriptor_set_layout_;
+  vk::UniqueHandle<vk::PipelineLayout, vk::DispatchLoaderDynamic>
+      pipeline_layout_;
 };
