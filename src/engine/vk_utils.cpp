@@ -1,5 +1,8 @@
 #include "vk_utils.hpp"
 
+#include "queue_family_indices.hpp"
+#include "swap_chain_support.hpp"
+
 VKAPI_ATTR VkBool32 VKAPI_CALL
 DebugCallBack(VkDebugUtilsMessageSeverityFlagBitsEXT messageSeverity,
               [[maybe_unused]] VkDebugUtilsMessageTypeFlagsEXT messageType,
@@ -40,7 +43,9 @@ bool IsDeviceSuitable(const vk::PhysicalDevice& device,
             << std::endl;
 #endif
 
-  for (auto const& required_extension : Constants::Engine::kDeviceExtensions) {
+  std::vector<const char*> device_extensions{VK_KHR_SWAPCHAIN_EXTENSION_NAME};
+
+  for (auto const& required_extension : device_extensions) {
     auto const result = std::find_if(
         extensions.cbegin(), extensions.cend(),
         [&](const vk::ExtensionProperties& extension) {
@@ -56,7 +61,7 @@ bool IsDeviceSuitable(const vk::PhysicalDevice& device,
     }
   }
 
-  SwapChainSupport support{device, surface, {}}; // Extent is not used
+  SwapChainSupport support{device, surface, {}};  // Extent is not used
   QueueFamilyIndices indices{device, surface};
 
   return support.HasRequiredSupport() && indices.IsComplete() &&

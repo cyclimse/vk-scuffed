@@ -1,5 +1,4 @@
-#ifndef QUEUEFAMILYINDICES_HPP
-#define QUEUEFAMILYINDICES_HPP
+#pragma once
 
 #include <vulkan/vulkan.hpp>
 
@@ -16,5 +15,3 @@ struct QueueFamilyIndices {
     return graphics_family.has_value() && present_family.has_value();
   }
 };
-
-#endif  // QUEUEFAMILYINDICES_HPP

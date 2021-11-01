@@ -1,6 +1,4 @@
-#ifndef VK_TYPES_HPP
-#define VK_TYPES_HPP
-
+#pragma once
 #include <vk_mem_alloc.h>
 
 #include <vulkan/vulkan.hpp>
@@ -17,6 +15,15 @@ struct AllocatedBuffer {
   };
 };
 
+struct SwapChainFrame {
+  vk::Image image;
+  vk::UniqueImageView image_view;
+  vk::UniqueFramebuffer frame_buffer;
+  AllocatedBuffer uniform_buffer;
+  AllocatedBuffer storage_buffer;
+  vk::CommandBuffer command_buffer;
+};
+
 struct VmaAllocatorPtrDestroyer {
   void operator()(VmaAllocator vma_allocator) {
     if (vma_allocator) {
@@ -24,5 +31,3 @@ struct VmaAllocatorPtrDestroyer {
     }
   }
 };
-
-#endif  // VK_TYPES_HPP

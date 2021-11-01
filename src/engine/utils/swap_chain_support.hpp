@@ -1,5 +1,4 @@
-#ifndef SWAPCHAINSUPPORT_HPP
-#define SWAPCHAINSUPPORT_HPP
+#pragma once
 
 #include <vulkan/vulkan.hpp>
 
@@ -26,5 +25,3 @@ class SwapChainSupport {
  private:
   vk::Extent2D actual_extent_;
 };
-
-#endif  // SWAPCHAINSUPPORT_HPP

@@ -1,22 +1,25 @@
-#ifndef GAME_HPP
-#define GAME_HPP
+#pragma once
+
+#include <GLFW/glfw3.h>
 
 #include <array>
+#include <memory>
 
-#include "../engine/vulkan_engine.hpp"
-#include "callbacks.hpp"
-#include "window.hpp"
+#include "sc_callbacks.hpp"
+#include "sc_config.hpp"
+#include "sc_renderer.hpp"
 
+namespace sc {
 class Game {
  public:
   Game();
   void Run();
   void Update();
 
- private:
-  Window window_;
-  VulkanEngine engine_;
+  std::shared_ptr<Config> const cfg_;
+  Renderer renderer_;
 
+ private:
   std::array<bool, GLFW_KEY_LAST> keys_pressed_;
 
  public:
@@ -26,5 +29,4 @@ class Game {
                                      double ypos);
   friend void scrollCallBack(GLFWwindow *window, double xpos, double ypos);
 };
-
-#endif  // GAME_HPP
+}  // namespace sc

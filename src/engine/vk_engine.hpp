@@ -1,15 +1,19 @@
-#ifndef VULKANENGINE_HPP
-#define VULKANENGINE_HPP
+#pragma once
 
-#include "../game/window.hpp"
+#include <memory>
+#include <vector>
 #include <vulkan/vulkan.hpp>
+#include <vulkan/vulkan_enums.hpp>
+#include <vulkan/vulkan_structs.hpp>
 
-#include "swap_chain_wrapper.hpp"
+#include "sc_config.hpp"
+#include "sc_window.hpp"
 #include "vk_types.hpp"
 
 class VulkanEngine {
  public:
-  VulkanEngine(Window const *window_ptr);
+  VulkanEngine(std::shared_ptr<sc::Config> const cfg,
+               sc::Window const *window_ptr);
 
  private:
   void createInstance();
@@ -18,9 +22,12 @@ class VulkanEngine {
   void createLogicalDevice();
   void createVmaAllocator();
   void createSwapChain();
+  void createRenderPass();
 
-  Window const *window_ptr_;
+  std::shared_ptr<sc::Config> const cfg_;
+  sc::Window const *window_ptr_;
 
+  // Vulkan setup
   vk::UniqueHandle<vk::Instance, vk::DispatchLoaderDynamic> instance_;
   vk::DispatchLoaderDynamic dldi_;
   vk::UniqueHandle<vk::DebugUtilsMessengerEXT, vk::DispatchLoaderDynamic>
@@ -31,8 +38,10 @@ class VulkanEngine {
   vk::Queue graphics_queue_;
   vk::Queue presentation_queue_;
   std::unique_ptr<VmaAllocator_T, VmaAllocatorPtrDestroyer> allocator_;
-  vk::UniqueHandle<vk::SwapchainKHR, vk::DispatchLoaderDynamic> swap_chain_;
-  // std::vector<vk::UniqueHandle<vk::Image, vk::DynamicLoader>> images_;
-};
 
-#endif  // VULKANENGINE_HPP
+  // Swap chain
+  vk::UniqueHandle<vk::SwapchainKHR, vk::DispatchLoaderDynamic> swap_chain_;
+  std::vector<SwapChainFrame> swap_chain_frames_;
+  vk::Extent2D swap_chain_image_extent_;
+  vk::Format swap_chain_image_format_;
+};

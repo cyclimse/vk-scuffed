@@ -1,15 +1,11 @@
 #include <GLFW/glfw3.h>
 
-#include "game/game.hpp"
+#include "sc_game.hpp"
 
 int main(void) {
 
-  glfwInit();
-
-  auto game = Game();
+  auto game = sc::Game{};
   game.Run();
-
-  glfwTerminate();
 
   return 0;
 }

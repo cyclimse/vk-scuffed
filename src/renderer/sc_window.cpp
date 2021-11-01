@@ -1,21 +1,19 @@
-#include "window.hpp"
+#include "sc_window.hpp"
 
 #include <GLFW/glfw3.h>
 
-#include "../utils/constants.hpp"
-#include "callbacks.hpp"
-#include "game.hpp"
+#include "sc_callbacks.hpp"
 
-Window::Window(void *user_ptr, std::uint32_t const initial_width,
-               std::uint32_t const initial_height) {
+using namespace sc;
+
+Window::Window(vk::Extent2D resolution, std::string_view name, void *user_ptr) {
+  // GLFW Initialization
+  [[maybe_unused]] static auto once = (glfwInit(), true);
   glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
 
   window_ptr_ =
       std::unique_ptr<GLFWwindow, WindowPtrDestroyer>{glfwCreateWindow(
-          initial_width, initial_height, Constants::GetFullProjectName().data(),
-          nullptr, nullptr)};
-  initial_width_ = initial_width;
-  initial_height_ = initial_height;
+          resolution.width, resolution.height, name.data(), nullptr, nullptr)};
 
   glfwSetKeyCallback(window_ptr_.get(), keyCallBack);
   glfwSetCursorPosCallback(window_ptr_.get(), cursorPositionCallBack);

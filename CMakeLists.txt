@@ -11,6 +11,7 @@ add_executable(scuffedcraft
 )
 
 add_subdirectory(src)
+target_include_directories(scuffedcraft PRIVATE src)
 
 set_property(TARGET scuffedcraft PROPERTY CXX_STANDARD 20)
 
@@ -27,7 +28,7 @@ add_custom_command(
         TARGET scuffedcraft PRE_BUILD
         COMMAND ${CMAKE_COMMAND} -E copy
             $<TARGET_FILE_DIR:scuffedcraft>/compile_commands.json  ${CMAKE_SOURCE_DIR}/compile_commands.json
-        COMMENT "Copying compile_commands.json" VERBATIM
+        COMMENT "Copying compile_commands.json ..." VERBATIM
 )
 
 find_package(Vulkan REQUIRED)
@@ -38,6 +39,7 @@ target_compile_definitions(scuffedcraft PUBLIC -DVULKAN_HPP_NO_CONSTRUCTORS)
 
 find_package(glfw3 REQUIRED)
 target_compile_definitions(scuffedcraft PUBLIC -DGLFW_INCLUDE_NONE)
+target_compile_definitions(scuffedcraft PUBLIC -DGLFW_INCLUDE_VULKAN)
 
 
 #target_include_directories(game PRIVATE "libs/stb_image")
