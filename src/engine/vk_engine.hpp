@@ -7,6 +7,7 @@
 #include <vulkan/vulkan_handles.hpp>
 #include <vulkan/vulkan_structs.hpp>
 
+#include "pipeline_factory.hpp"
 #include "sc_config.hpp"
 #include "sc_window.hpp"
 #include "vk_types.hpp"
@@ -17,7 +18,7 @@ class VulkanEngine {
                sc::Window const *window_ptr);
 #ifdef __SANITIZE_ADDRESS__
   // This looks terrible but seem to be necessary to avoid warning pollution
-  // from ASAN with NVDIA proprietary drivers
+  // from ASAN with NVIDIA proprietary drivers
   inline ~VulkanEngine() { instance_.release(); }
 #endif
  private:
@@ -30,6 +31,8 @@ class VulkanEngine {
   void createImageViews();
   void createRenderPass();
   void createDescriptorSetLayout();
+  void createPipelineFactory();
+  void createPipelines();
 
   std::shared_ptr<sc::Config> const cfg_;
   sc::Window const *window_ptr_;
@@ -62,4 +65,7 @@ class VulkanEngine {
       global_decriptor_set_layout_;
   vk::UniqueHandle<vk::PipelineLayout, vk::DispatchLoaderDynamic>
       pipeline_layout_;
+
+  // Pipeline
+  PipelineFactory pipeline_factory_;
 };

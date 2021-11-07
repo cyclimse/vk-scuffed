@@ -25,6 +25,7 @@ VulkanEngine::VulkanEngine(std::shared_ptr<sc::Config> const cfg,
   createImageViews();
   createRenderPass();
   createDescriptorSetLayout();
+  createPipelineFactory();
 }
 
 void VulkanEngine::createInstance() {
@@ -326,3 +327,5 @@ void VulkanEngine::createDescriptorSetLayout() {
   global_decriptor_set_layout_ =
       device_->createDescriptorSetLayoutUnique(layout_info, nullptr, dldi_);
 }
+
+void VulkanEngine::createPipelineFactory() {}

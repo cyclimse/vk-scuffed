@@ -5,8 +5,9 @@ mkShell {
     # IDE
     vscodium-fhs
     clang-tools
+    pre-commit
     # Build tools
-    cmake 
+    cmake
     clang_12
     lldb_12
     gdb
@@ -28,5 +29,5 @@ mkShell {
   VULKAN_SDK = "${vulkan-validation-layers}/share/vulkan/explicit_layer.d";
   SHADERC_LIB = "${shaderc}/lib";
   LD_LIBRARY_PATH = "/run/opengl-driver/lib:/run/opengl-driver-32/lib";
-  LSAN_OPTIONS = "suppressions=asan.supp";  
+  LSAN_OPTIONS = "suppressions=asan.supp";
 }

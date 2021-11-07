@@ -9,7 +9,7 @@ mat4 proj;
 
 struct ObjectData{
 	mat4 model;
-}; 
+};
 
 //all object matrices
 layout(std140,set = 1, binding = 0) readonly buffer ObjectBuffer{

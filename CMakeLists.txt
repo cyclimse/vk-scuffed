@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.16)
+cmake_minimum_required(VERSION 3.16...3.21)
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS
     ON
@@ -66,6 +66,7 @@ if(CMAKE_EXPORT_COMPILE_COMMANDS)
       ${CMAKE_CXX_IMPLICIT_INCLUDE_DIRECTORIES})
 endif()
 
+# Shader compilation stage
 find_program(
   GLSL_VALIDATOR glslangValidator
   HINTS /usr/bin /usr/local/bin $ENV{VULKAN_SDK}/Bin/ $ENV{VULKAN_SDK}/Bin32/)
@@ -87,3 +88,12 @@ foreach(GLSL ${GLSL_SOURCE_FILES})
 endforeach(GLSL)
 
 add_custom_target(Shaders DEPENDS ${SPIRV_BINARY_FILES})
+
+# Assets copy
+add_custom_command(
+  TARGET Shaders
+  POST_BUILD
+  COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_SOURCE_DIR}/assets
+          $<TARGET_FILE_DIR:scuffedcraft>/assets
+  COMMENT "Copying assets ..."
+  VERBATIM)
