@@ -6,6 +6,7 @@
 namespace sc {
 class Material {
  public:
-  std::vector<vk::PipelineShaderStageCreateInfo> GetShaderStageCreateInfos() const;
+  std::vector<vk::PipelineShaderStageCreateInfo> GetShaderStageCreateInfos()
+      const;
 };
 }  // namespace sc

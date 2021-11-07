@@ -9,7 +9,8 @@
 namespace sc {
 class Window {
  public:
-  Window(vk::Extent2D const resolution, std::string_view const name, void *user_ptr);
+  Window(vk::Extent2D const resolution, std::string_view const name,
+         void *user_ptr);
 
   bool ShouldClose() const;
   void Close() const;

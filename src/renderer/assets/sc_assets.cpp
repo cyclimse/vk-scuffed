@@ -2,13 +2,4 @@
 
 using namespace sc;
 
-Assets Assets::Load() {
-
-
-
-
-
-
-    
-    return Assets{};
-}
+Assets Assets::Load() { return Assets{}; }

@@ -1,5 +1,6 @@
 cmake_minimum_required(VERSION 3.16...3.21)
 
+# cmake-lint: disable=C0103
 set(CMAKE_EXPORT_COMPILE_COMMANDS
     ON
     CACHE INTERNAL "")
@@ -37,7 +38,7 @@ add_custom_command(
     ${CMAKE_SOURCE_DIR}/compile_commands.json
   COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_SOURCE_DIR}/asan.supp
           $<TARGET_FILE_DIR:scuffedcraft>/asan.supp
-  COMMENT "Copying compile_commands.json ..."
+  COMMENT "Copying compile_commands.json and asan.supp ..."
   VERBATIM)
 
 find_package(Vulkan REQUIRED)
@@ -75,6 +76,7 @@ file(
   "${PROJECT_SOURCE_DIR}/assets/shaders/*.vert"
   "${PROJECT_SOURCE_DIR}/assets/shaders/*.comp")
 
+# cmake-lint: disable=C0103
 foreach(GLSL ${GLSL_SOURCE_FILES})
   message(STATUS "BUILDING SHADER")
   get_filename_component(FILE_NAME ${GLSL} NAME)
@@ -83,11 +85,15 @@ foreach(GLSL ${GLSL_SOURCE_FILES})
   add_custom_command(
     OUTPUT ${SPIRV}
     COMMAND ${GLSL_VALIDATOR} -V ${GLSL} -o ${SPIRV}
-    DEPENDS ${GLSL})
+    DEPENDS ${GLSL}
+    COMMENT "Running glslValidator ...")
   list(APPEND SPIRV_BINARY_FILES ${SPIRV})
 endforeach(GLSL)
 
-add_custom_target(Shaders DEPENDS ${SPIRV_BINARY_FILES})
+add_custom_target(
+  Shaders
+  DEPENDS ${SPIRV_BINARY_FILES}
+  COMMENT "Building shaders ...")
 
 # Assets copy
 add_custom_command(

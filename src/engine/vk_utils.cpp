@@ -17,11 +17,10 @@ DebugCallBack(VkDebugUtilsMessageSeverityFlagBitsEXT messageSeverity,
 }
 
 vk::DebugUtilsMessengerCreateInfoEXT GetDebugUtilsMessengerCreateInfoStruct() {
-  auto const severityFlags =
-      vk::DebugUtilsMessageSeverityFlagBitsEXT::eError |
-      vk::DebugUtilsMessageSeverityFlagBitsEXT::eWarning;
-      // vk::DebugUtilsMessageSeverityFlagBitsEXT::eVerbose |
-      // vk::DebugUtilsMessageSeverityFlagBitsEXT::eInfo;
+  auto const severityFlags = vk::DebugUtilsMessageSeverityFlagBitsEXT::eError |
+                             vk::DebugUtilsMessageSeverityFlagBitsEXT::eWarning;
+  // vk::DebugUtilsMessageSeverityFlagBitsEXT::eVerbose |
+  // vk::DebugUtilsMessageSeverityFlagBitsEXT::eInfo;
 
   auto const typeFlags = vk::DebugUtilsMessageTypeFlagBitsEXT::eGeneral |
                          vk::DebugUtilsMessageTypeFlagBitsEXT::eValidation |
