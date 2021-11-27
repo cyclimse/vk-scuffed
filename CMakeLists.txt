@@ -6,6 +6,7 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS
     CACHE INTERNAL "")
 
 include(FindVulkan)
+include(FindBoost)
 
 project(scuffedcraft LANGUAGES CXX)
 
@@ -16,12 +17,16 @@ target_include_directories(scuffedcraft PRIVATE src)
 
 set_property(TARGET scuffedcraft PROPERTY CXX_STANDARD 20)
 
-target_link_options(scuffedcraft PRIVATE $<$<CONFIG:Debug>:-fsanitize=address
+target_link_options(scuffedcraft PRIVATE $<$<CONFIG:Asan>:-fsanitize=address
                     -fno-omit-frame-pointer>)
 
 target_compile_options(
   scuffedcraft
   PRIVATE $<$<CONFIG:Debug>:-Wall
+          -Wextra
+          -Wpedantic
+          -Og>
+          $<$<CONFIG:Asan>:-Wall
           -Wextra
           -Wpedantic
           -Og
@@ -42,6 +47,10 @@ add_custom_command(
   VERBATIM)
 
 find_package(Vulkan REQUIRED)
+find_package(
+  Boost 1.69.0
+  COMPONENTS json
+  REQUIRED)
 target_compile_definitions(scuffedcraft
                            PUBLIC -DVULKAN_HPP_NO_STRUCT_CONSTRUCTORS)
 target_compile_definitions(scuffedcraft PUBLIC -DVULKAN_HPP_NO_CONSTRUCTORS)
@@ -60,7 +69,7 @@ target_include_directories(scuffedcraft PRIVATE "libs")
 # avoiding warning pollution from VMA
 target_precompile_headers(scuffedcraft PRIVATE [["vk_mem_alloc.h"]])
 
-target_link_libraries(scuffedcraft PRIVATE Vulkan::Vulkan glfw)
+target_link_libraries(scuffedcraft PRIVATE Vulkan::Vulkan Boost::boost glfw)
 
 if(CMAKE_EXPORT_COMPILE_COMMANDS)
   set(CMAKE_CXX_STANDARD_INCLUDE_DIRECTORIES
@@ -96,10 +105,8 @@ add_custom_target(
   COMMENT "Building shaders ...")
 
 # Assets copy
-add_custom_command(
-  TARGET Shaders
-  POST_BUILD
-  COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_SOURCE_DIR}/assets
-          $<TARGET_FILE_DIR:scuffedcraft>/assets
-  COMMENT "Copying assets ..."
-  VERBATIM)
+add_custom_target(
+  copy_assets
+  COMMAND ${CMAKE_COMMAND} -P ${CMAKE_CURRENT_LIST_DIR}/copy-resources.cmake
+  COMMENT "Copying assets ...")
+add_dependencies(scuffedcraft copy_assets)

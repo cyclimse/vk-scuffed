@@ -3,11 +3,15 @@
 #include <GLFW/glfw3.h>
 
 #include <array>
+#include <boost/json.hpp>
 #include <memory>
 
+#include "sc_assets.hpp"
 #include "sc_callbacks.hpp"
 #include "sc_config.hpp"
 #include "sc_renderer.hpp"
+
+using namespace boost;
 
 namespace sc {
 class Game {
@@ -16,7 +20,9 @@ class Game {
   void Run();
   void Update();
 
-  std::shared_ptr<Config> const cfg_;
+  json::stream_parser json_parser_;
+  std::unique_ptr<Config> const cfg_;
+  std::unique_ptr<Assets> const assets_;
   Renderer renderer_;
 
  private:

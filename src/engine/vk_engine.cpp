@@ -13,8 +13,7 @@
 #include "swap_chain_support.hpp"
 #include "vk_utils.hpp"
 
-VulkanEngine::VulkanEngine(std::shared_ptr<sc::Config> const cfg,
-                           sc::Window const *window_ptr)
+VulkanEngine::VulkanEngine(sc::Config const *cfg, sc::Window const *window_ptr)
     : cfg_{cfg}, window_ptr_(window_ptr) {
   createInstance();
   createSurface();

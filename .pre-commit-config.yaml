@@ -2,6 +2,8 @@ repos:
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v4.0.1
     hooks:
+    - id: pretty-format-json
+      args: ["--autofix"]
     - id: end-of-file-fixer
       stages: [commit]
     - id: trailing-whitespace

@@ -4,8 +4,9 @@
 
 using namespace sc;
 
-Renderer::Renderer(std::shared_ptr<Config> const cfg, void *user_ptr)
+Renderer::Renderer(Config const *cfg, Assets const *assets, void *user_ptr)
     : cfg_{cfg},
+      assets_{assets},
       init_glfw_{},
-      window_{cfg_->eng.resolution, cfg_->window_name, user_ptr},
+      window_{cfg_->eng.resolution, cfg_->GetWindowName(), user_ptr},
       engine_{cfg_, &window_} {}

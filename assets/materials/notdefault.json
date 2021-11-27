@@ -1,0 +1,6 @@
+{
+  "name": "notdefault",
+  "shaders": [
+    "shader.frag"
+  ]
+}

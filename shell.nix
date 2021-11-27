@@ -18,6 +18,7 @@ mkShell {
     # Libs
     makeWrapper
     vulkan-headers
+    boost175
     glfw
   ];
 

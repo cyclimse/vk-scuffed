@@ -2,6 +2,7 @@
 
 #include <GLFW/glfw3.h>
 
+#include "sc_assets.hpp"
 #include "sc_config.hpp"
 #include "sc_window.hpp"
 #include "vk_engine.hpp"
@@ -20,9 +21,10 @@ struct InitGLFW {
 
 class Renderer {
  public:
-  Renderer(std::shared_ptr<Config> const cfg, void *user_ptr);
+  Renderer(Config const *cfg, Assets const *assets, void *user_ptr);
 
-  std::shared_ptr<Config> const cfg_;
+  Config const *cfg_;
+  Assets const *assets_;
 
   InitGLFW init_glfw_;
   Window window_;

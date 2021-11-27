@@ -1,0 +1,12 @@
+{
+  "engine": {
+    "engine_name": "Scuffedcraft engine",
+    "resolution": {
+      "height": 1080,
+      "width": 1920
+    },
+    "validation_layers_enabled": true
+  },
+  "project_name": "toot",
+  "version": 1
+}

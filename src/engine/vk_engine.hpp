@@ -14,8 +14,7 @@
 
 class VulkanEngine {
  public:
-  VulkanEngine(std::shared_ptr<sc::Config> const cfg,
-               sc::Window const *window_ptr);
+  VulkanEngine(sc::Config const *cfg, sc::Window const *window_ptr);
 #ifdef __SANITIZE_ADDRESS__
   // This looks terrible but seem to be necessary to avoid warning pollution
   // from ASAN with NVIDIA proprietary drivers
@@ -34,7 +33,7 @@ class VulkanEngine {
   void createPipelineFactory();
   void createPipelines();
 
-  std::shared_ptr<sc::Config> const cfg_;
+  sc::Config const *cfg_;
   sc::Window const *window_ptr_;
 
   // Vulkan setup
