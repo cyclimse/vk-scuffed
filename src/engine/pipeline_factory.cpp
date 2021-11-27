@@ -2,6 +2,8 @@
 
 #include <vulkan/vulkan_core.h>
 
+#include <cstdint>
+#include <vulkan/vulkan_enums.hpp>
 #include <vulkan/vulkan_structs.hpp>
 
 PipelineFactory::PipelineFactory(
@@ -14,7 +16,7 @@ PipelineFactory::PipelineFactory(
       extent_{extent} {};
 
 vk::GraphicsPipelineCreateInfo PipelineFactory::Build(
-    const sc::Material &material) {
+    const sc::Material& material) {
   vk::PipelineInputAssemblyStateCreateInfo input_assembly{
       .flags = {},
       .topology = vk::PrimitiveTopology::eTriangleList,
@@ -57,7 +59,56 @@ vk::GraphicsPipelineCreateInfo PipelineFactory::Build(
       .alphaToCoverageEnable = false,
       .alphaToOneEnable = false};
 
-  vk::GraphicsPipelineCreateInfo create_info{};
+  vk::PipelineDepthStencilStateCreateInfo depth_stencil{
+      .depthTestEnable = true,
+      .depthWriteEnable = true,
+      .depthCompareOp = vk::CompareOp::eLess,
+      .depthBoundsTestEnable = false,
+      .stencilTestEnable = false};
+
+  vk::PipelineColorBlendAttachmentState color_blend_attachment{
+      .srcColorBlendFactor = vk::BlendFactor::eOne,
+      .dstColorBlendFactor = vk::BlendFactor::eZero,
+      .colorBlendOp = vk::BlendOp::eAdd,
+      .srcAlphaBlendFactor = vk::BlendFactor::eOne,
+      .dstAlphaBlendFactor = vk::BlendFactor::eZero,
+      .alphaBlendOp = vk::BlendOp::eAdd,
+      .colorWriteMask =
+          vk::ColorComponentFlagBits::eR | vk::ColorComponentFlagBits::eG |
+          vk::ColorComponentFlagBits::eB | vk::ColorComponentFlagBits::eA};
+
+  vk::PipelineColorBlendStateCreateInfo color_blending{
+      .logicOpEnable = false,
+      .logicOp = vk::LogicOp::eCopy,
+      .attachmentCount = 1u,
+      .pAttachments = &color_blend_attachment};
+
+  std::vector<vk::DynamicState> dynamic_state_attachments = {
+      vk::DynamicState::eViewport, vk::DynamicState::eScissor};
+
+  vk::PipelineDynamicStateCreateInfo dynamic_state{
+      .dynamicStateCount =
+          static_cast<std::uint32_t>(dynamic_state_attachments.size()),
+      .pDynamicStates = dynamic_state_attachments.data()};
+
+  auto shader_stages = material.GetShaderStageCreateInfos();
+
+  vk::GraphicsPipelineCreateInfo create_info{
+      .flags = {},
+      .stageCount = static_cast<std::uint32_t>(shader_stages.size()),
+      .pStages = shader_stages.data(),
+      .pVertexInputState = &vertex_input_info_,
+      .pInputAssemblyState = &input_assembly,
+      .pTessellationState = nullptr,
+      .pViewportState = &view_port_state,
+      .pRasterizationState = &rasterizer_state,
+      .pMultisampleState = &multisampling_state,
+      .pDepthStencilState = &depth_stencil,
+      .pColorBlendState = &color_blending,
+      .pDynamicState = &dynamic_state,
+      .layout = layout_,
+      .renderPass = pass_,
+      .subpass = 0};
 
   return create_info;
 }

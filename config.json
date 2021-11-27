@@ -1,12 +1,18 @@
 {
   "engine": {
     "engine_name": "Scuffedcraft engine",
+    "messenger_severity_flags": {
+      "error": true,
+      "info": true,
+      "verbose": false,
+      "warning": true
+    },
     "resolution": {
-      "height": 1080,
-      "width": 1920
+      "height": 720,
+      "width": 1280
     },
     "validation_layers_enabled": true
   },
-  "project_name": "toot",
+  "project_name": "bite",
   "version": 1
 }

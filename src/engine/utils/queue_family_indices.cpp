@@ -1,5 +1,8 @@
 #include "queue_family_indices.hpp"
 
+#include <stdexcept>
+#include <vector>
+
 QueueFamilyIndices::QueueFamilyIndices(const vk::PhysicalDevice& device,
                                        const vk::SurfaceKHR& surface) {
   auto const queue_families = device.getQueueFamilyProperties();

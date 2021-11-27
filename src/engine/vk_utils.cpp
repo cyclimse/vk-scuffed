@@ -1,5 +1,11 @@
 #include "vk_utils.hpp"
 
+#include <string.h>
+
+#include <algorithm>
+#include <iostream>
+#include <vector>
+
 #include "queue_family_indices.hpp"
 #include "swap_chain_support.hpp"
 
@@ -16,19 +22,15 @@ DebugCallBack(VkDebugUtilsMessageSeverityFlagBitsEXT messageSeverity,
   return VK_FALSE;
 }
 
-vk::DebugUtilsMessengerCreateInfoEXT GetDebugUtilsMessengerCreateInfoStruct() {
-  auto const severityFlags = vk::DebugUtilsMessageSeverityFlagBitsEXT::eError |
-                             vk::DebugUtilsMessageSeverityFlagBitsEXT::eWarning;
-  // vk::DebugUtilsMessageSeverityFlagBitsEXT::eVerbose |
-  // vk::DebugUtilsMessageSeverityFlagBitsEXT::eInfo;
-
-  auto const typeFlags = vk::DebugUtilsMessageTypeFlagBitsEXT::eGeneral |
-                         vk::DebugUtilsMessageTypeFlagBitsEXT::eValidation |
-                         vk::DebugUtilsMessageTypeFlagBitsEXT::ePerformance;
+vk::DebugUtilsMessengerCreateInfoEXT GetDebugUtilsMessengerCreateInfoStruct(
+    vk::Flags<vk::DebugUtilsMessageSeverityFlagBitsEXT> severity_flags) {
+  auto const type_flags = vk::DebugUtilsMessageTypeFlagBitsEXT::eGeneral |
+                          vk::DebugUtilsMessageTypeFlagBitsEXT::eValidation |
+                          vk::DebugUtilsMessageTypeFlagBitsEXT::ePerformance;
 
   return vk::DebugUtilsMessengerCreateInfoEXT{.flags = {},
-                                              .messageSeverity = severityFlags,
-                                              .messageType = typeFlags,
+                                              .messageSeverity = severity_flags,
+                                              .messageType = type_flags,
                                               .pfnUserCallback = DebugCallBack};
 }
 

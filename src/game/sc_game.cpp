@@ -3,6 +3,8 @@
 #include <memory>
 
 #include "sc_assets.hpp"
+#include "sc_resource.hpp"
+#include "sc_window.hpp"
 
 using namespace sc;
 

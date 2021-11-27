@@ -1,16 +1,22 @@
 #pragma once
 
-#include <memory>
-#include <vector>
-#include <vulkan/vulkan.hpp>
+#include <memory>             // for unique_ptr
+#include <vector>             // for vector
+#include <vulkan/vulkan.hpp>  // for DispatchLoaderDynamic, UniqueHandle
 #include <vulkan/vulkan_enums.hpp>
 #include <vulkan/vulkan_handles.hpp>
 #include <vulkan/vulkan_structs.hpp>
 
-#include "pipeline_factory.hpp"
+#include "pipeline_factory.hpp"  // for PipelineFactory
 #include "sc_config.hpp"
 #include "sc_window.hpp"
-#include "vk_types.hpp"
+#include "vk_types.hpp"  // for SwapChainFrame, VmaAllocatorPtrDestr...
+
+namespace sc {
+class Window;
+struct Config;
+}  // namespace sc
+struct VmaAllocator_T;
 
 class VulkanEngine {
  public:

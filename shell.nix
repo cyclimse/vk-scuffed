@@ -14,6 +14,7 @@ mkShell {
     # Debug tools
     cmake-format
     cppcheck
+    include-what-you-use
     vulkan-validation-layers
     # Libs
     makeWrapper

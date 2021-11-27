@@ -1,15 +1,17 @@
 #pragma once
 
-#include <GLFW/glfw3.h>
+#include <GLFW/glfw3.h>  // for GLFWwindow, GLFW_KEY_LAST
 
-#include <array>
+#include <array>                           // for array
+#include <boost/config/detail/suffix.hpp>  // for boost
 #include <boost/json.hpp>
-#include <memory>
+#include <boost/json/stream_parser.hpp>  // for stream_parser
+#include <memory>                        // for unique_ptr
 
-#include "sc_assets.hpp"
+#include "sc_assets.hpp"  // for Assets
 #include "sc_callbacks.hpp"
-#include "sc_config.hpp"
-#include "sc_renderer.hpp"
+#include "sc_config.hpp"    // for Config
+#include "sc_renderer.hpp"  // for Renderer
 
 using namespace boost;
 

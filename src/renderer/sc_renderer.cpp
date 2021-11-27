@@ -1,6 +1,13 @@
 #include "sc_renderer.hpp"
 
-#include <GLFW/glfw3.h>
+#include <string>
+
+#include "sc_config.hpp"
+#include "sc_resource.hpp"
+
+namespace sc {
+struct Assets;
+}  // namespace sc
 
 using namespace sc;
 

@@ -1,11 +1,18 @@
 #include "sc_config.hpp"
 
+#include <boost/json/detail/value_to.hpp>
+#include <boost/json/object.hpp>
+#include <boost/json/stream_parser.hpp>
+#include <boost/json/string.hpp>
+#include <boost/json/system_error.hpp>
+#include <boost/json/value_to.hpp>
+#include <exception>
 #include <filesystem>
-#include <fstream>
-#include <iostream>
+#include <fstream>   // IWYU pragma: keep
+#include <iostream>  // IWYU pragma: keep
+#include <sstream>
 #include <string>
 #include <vulkan/vulkan.hpp>
-#include <vulkan/vulkan_structs.hpp>
 
 #include "json_utils.hpp"
 
@@ -18,13 +25,15 @@ Config Config::Default() {
   constexpr bool is_debug = false;
 #endif
 
-  return Config{.version = 1u,
-                .is_debug = is_debug,
-                .release_type = is_debug ? "DEBUG" : "RELEASE",
-                .project_name = "Scuffecraft",
-                .eng{.engine_name = "Scuffedcraft engine",
-                     .resolution = {1280, 720},
-                     .validation_layers_enabled = is_debug}};
+  return Config{
+      .version = 1u,
+      .is_debug = is_debug,
+      .release_type = is_debug ? "DEBUG" : "RELEASE",
+      .project_name = "Scuffecraft",
+      .eng{.engine_name = "Scuffedcraft engine",
+           .resolution = {1280, 720},
+           .validation_layers_enabled = is_debug,
+           .severity_flags = vk::DebugUtilsMessageSeverityFlagBitsEXT::eError}};
 }
 
 Config Config::Load(json::stream_parser& parser,
@@ -71,8 +80,14 @@ Config sc::tag_invoke(json::value_to_tag<Config>, json::value const& jv) {
   if (auto p = obj.if_contains("engine")) {
     if (p->is_object()) {
       json::object const& eng_obj = p->get_object();
-      if (auto res_p = eng_obj.if_contains("resolution")) {
-        config.eng.resolution = json::value_to<vk::Extent2D>(*res_p);
+      if (auto pp = eng_obj.if_contains("resolution")) {
+        config.eng.resolution = json::value_to<vk::Extent2D>(*pp);
+      }
+      if (auto pp = eng_obj.if_contains("messenger_severity_flags")) {
+        auto const flags =
+            json::value_to<vk::Flags<vk::DebugUtilsMessageSeverityFlagBitsEXT>>(
+                *pp);
+        config.eng.severity_flags = flags ? flags : config.eng.severity_flags;
       }
     }
   }

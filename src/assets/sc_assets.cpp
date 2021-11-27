@@ -1,15 +1,22 @@
 #include "sc_assets.hpp"
 
-#include <array>
-#include <boost/json.hpp>
+#include <boost/json/stream_parser.hpp>
+#include <boost/json/system_error.hpp>
+#include <boost/json/value.hpp>
+#include <boost/json/value_to.hpp>
 #include <cstddef>
 #include <cstdint>
+#include <exception>
 #include <filesystem>
-#include <fstream>
-#include <iostream>
+#include <fstream>   // IWYU pragma: keep
+#include <iostream>  // IWYU pragma: keep
+#include <sstream>
 #include <utility>
+#include <vector>
 
 #include "sc_material.hpp"
+#include "sc_resource.hpp"
+#include "sc_shader.hpp"
 
 using namespace sc;
 using namespace boost;
@@ -40,7 +47,7 @@ Assets Assets::Load(json::stream_parser& parser,
       auto jv = parser.release();
       parser.reset();
       try {
-        Material material = json::value_to<Material>(jv);
+        MaterialResource material = json::value_to<MaterialResource>(jv);
         assets.materials[material.name] = std::move(material);
       } catch (std::exception const& e) {
         std::clog << "[ERROR] Could not create Material " << file.path()
@@ -61,7 +68,7 @@ Assets Assets::Load(json::stream_parser& parser,
       }
 
       size_t file_size = static_cast<size_t>(stream.tellg());
-      Shader shader{};
+      ShaderResource shader{};
 
       shader.buffer.reserve(file_size / sizeof(std::uint32_t));
       stream.seekg(0);

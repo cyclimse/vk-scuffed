@@ -1,16 +1,24 @@
 #include "vk_engine.hpp"
 
 #include <GLFW/glfw3.h>
+#include <vulkan/vulkan_core.h>
 
+#include <array>
+#include <cstdint>
 #include <cstdlib>
+#include <optional>
+#include <ostream>
 #include <set>
+#include <stdexcept>
+#include <string>
 #include <vector>
 #include <vulkan/vulkan.hpp>
-#include <vulkan/vulkan_handles.hpp>
 
 #include "queue_family_indices.hpp"
 #include "sc_config.hpp"
+#include "sc_window.hpp"
 #include "swap_chain_support.hpp"
+#include "vk_mem_alloc.h"
 #include "vk_utils.hpp"
 
 VulkanEngine::VulkanEngine(sc::Config const *cfg, sc::Window const *window_ptr)
@@ -61,8 +69,8 @@ void VulkanEngine::createInstance() {
   if (cfg_->eng.validation_layers_enabled) {
     vk::StructureChain<vk::InstanceCreateInfo,
                        vk::DebugUtilsMessengerCreateInfoEXT>
-        chain = {instance_create_info,
-                 GetDebugUtilsMessengerCreateInfoStruct()};
+        chain = {instance_create_info, GetDebugUtilsMessengerCreateInfoStruct(
+                                           cfg_->eng.severity_flags)};
     instance_ = vk::createInstanceUnique(chain.get<vk::InstanceCreateInfo>(),
                                          nullptr, dldi_);
   } else {
@@ -73,7 +81,8 @@ void VulkanEngine::createInstance() {
 
   if (cfg_->eng.validation_layers_enabled) {
     messenger_ = instance_->createDebugUtilsMessengerEXTUnique(
-        GetDebugUtilsMessengerCreateInfoStruct(), nullptr, dldi_);
+        GetDebugUtilsMessengerCreateInfoStruct(cfg_->eng.severity_flags),
+        nullptr, dldi_);
   }
 }
 

@@ -1,5 +1,7 @@
 #pragma once
 
+#include <cstdint>
+#include <optional>
 #include <vulkan/vulkan.hpp>
 
 struct QueueFamilyIndices {

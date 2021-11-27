@@ -66,8 +66,8 @@ target_compile_definitions(scuffedcraft PUBLIC -DGLFW_INCLUDE_VULKAN)
 target_include_directories(scuffedcraft PRIVATE "libs")
 
 # Precompiling headers achieves two things here: -- faster compilation times --
-# avoiding warning pollution from VMA
-target_precompile_headers(scuffedcraft PRIVATE [["vk_mem_alloc.h"]])
+# avoiding warning pollution from VMA target_precompile_headers(scuffedcraft
+# PRIVATE [["vk_mem_alloc.h"]])
 
 target_link_libraries(scuffedcraft PRIVATE Vulkan::Vulkan Boost::boost glfw)
 

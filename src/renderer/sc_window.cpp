@@ -1,6 +1,9 @@
 #include "sc_window.hpp"
 
 #include <GLFW/glfw3.h>
+#include <stdint.h>
+
+#include <stdexcept>
 
 #include "sc_callbacks.hpp"
 

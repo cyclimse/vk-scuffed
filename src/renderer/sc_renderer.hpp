@@ -1,13 +1,16 @@
 #pragma once
 
-#include <GLFW/glfw3.h>
+#include <GLFW/glfw3.h>  // for glfwInit, glfwTerminate, glfwWindowHint
 
 #include "sc_assets.hpp"
 #include "sc_config.hpp"
-#include "sc_window.hpp"
-#include "vk_engine.hpp"
+#include "sc_window.hpp"  // for Window
+#include "vk_engine.hpp"  // for VulkanEngine
 
 namespace sc {
+struct Assets;
+struct Config;
+
 struct InitGLFW {
   inline InitGLFW() {
     glfwInit();

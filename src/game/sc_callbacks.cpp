@@ -1,5 +1,7 @@
 #include "sc_callbacks.hpp"
 
+#include <array>
+
 #include "sc_game.hpp"
 
 using namespace sc;

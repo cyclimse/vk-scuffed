@@ -1,6 +1,8 @@
 #include "swap_chain_support.hpp"
 
-#include <vulkan/vulkan_structs.hpp>
+#include <stdint.h>
+
+#include <algorithm>
 
 SwapChainSupport::SwapChainSupport(const vk::PhysicalDevice& device,
                                    const vk::SurfaceKHR& surface,

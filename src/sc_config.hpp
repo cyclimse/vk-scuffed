@@ -1,9 +1,21 @@
 #pragma once
 
+#include <stdint.h>  // for uint32_t
+
+#include <boost/config/detail/suffix.hpp>  // for boost
 #include <boost/json.hpp>
-#include <filesystem>
-#include <string>
-#include <vulkan/vulkan.hpp>
+#include <boost/json/value.hpp>  // for value
+#include <filesystem>            // for path
+#include <string>                // for allocator, char_traits
+#include <vulkan/vulkan.hpp>     // for DebugUtilsMessageSeverityF...
+
+namespace boost {
+namespace json {
+class stream_parser;
+template <class T>
+struct value_to_tag;
+}  // namespace json
+}  // namespace boost
 
 using namespace boost;
 
@@ -24,6 +36,7 @@ struct Config {
     std::string engine_name;
     vk::Extent2D resolution;
     bool validation_layers_enabled;
+    vk::Flags<vk::DebugUtilsMessageSeverityFlagBitsEXT> severity_flags;
   };
   Engine eng;
 

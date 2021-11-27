@@ -7,6 +7,6 @@ using namespace sc;
 
 vk::ShaderModuleCreateInfo Shader::GetShaderModuleCreateInfo() const {
   return vk::ShaderModuleCreateInfo{
-      .codeSize = buffer.size() * sizeof(std::uint32_t),
-      .pCode = buffer.data()};
+      .codeSize = resource_.buffer.size() * sizeof(std::uint32_t),
+      .pCode = resource_.buffer.data()};
 }
