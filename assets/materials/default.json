@@ -1,6 +1,7 @@
 {
   "name": "default",
   "shaders": [
+    "shader.vert",
     "shader.frag"
   ]
 }

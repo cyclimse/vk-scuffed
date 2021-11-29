@@ -59,7 +59,7 @@ Assets Assets::Load(json::stream_parser& parser,
 
   for (const auto& file : directory_iterator(directory / "shaders")) {
     if (file.is_regular_file() && file.path().extension() == ".spv") {
-      std::ifstream stream(file.path(), std::ios::in | std::ios::binary);
+      std::ifstream stream(file.path(), std::ios::ate | std::ios::binary);
 
       if (!stream.good()) {
         std::clog << "[WARNING] Could not load shader " << file.path()
@@ -70,10 +70,10 @@ Assets Assets::Load(json::stream_parser& parser,
       size_t file_size = static_cast<size_t>(stream.tellg());
       ShaderResource shader{};
 
-      shader.buffer.reserve(file_size / sizeof(std::uint32_t));
+      shader.buffer.resize(file_size / sizeof(std::uint32_t));
       stream.seekg(0);
 
-      stream.read(reinterpret_cast<char*>(shader.buffer.data()), file_size);
+      stream.read((char*)shader.buffer.data(), file_size);
 
       stream.close();
 

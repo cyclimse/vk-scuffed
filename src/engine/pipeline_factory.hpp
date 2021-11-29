@@ -11,7 +11,8 @@ class PipelineFactory {
   PipelineFactory(vk::RenderPass pass, vk::PipelineLayout layout,
                   vk::PipelineVertexInputStateCreateInfo vertex_input_info,
                   vk::Extent2D extent);
-  vk::GraphicsPipelineCreateInfo Build(sc::Material const &material);
+  void Build(vk::Device device, vk::DispatchLoaderDynamic dldi,
+             sc::Material& material);
 
  private:
   vk::RenderPass pass_;

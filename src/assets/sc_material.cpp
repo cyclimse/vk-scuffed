@@ -5,15 +5,31 @@
 #include <boost/json/object.hpp>
 #include <boost/json/string.hpp>
 #include <boost/json/value_to.hpp>
+#include <cstddef>
+#include <iostream>
+#include <string>
 #include <vulkan/vulkan.hpp>
 
 using namespace sc;
 
+Material::Material(std::vector<sc::Shader const*>&& shaders,
+                   const MaterialResource& resource)
+    : shaders_{shaders}, resource_{resource} {}
+
 std::vector<vk::PipelineShaderStageCreateInfo>
 Material::GetShaderStageCreateInfos() const {
-  vk::PipelineShaderStageCreateInfo shader{};
+  std::vector<vk::PipelineShaderStageCreateInfo> result{shaders_.size()};
 
-  return {};
+  for (auto i = 0u; i < shaders_.size(); i++) {
+    std::cout << shaders_[i]->GetName() << std::endl;
+    result[i] =
+        vk::PipelineShaderStageCreateInfo{.flags = {},
+                                          .stage = shaders_[i]->GetType(),
+                                          .module = shaders_[i]->GetModule(),
+                                          .pName = "main"};
+  }
+
+  return result;
 }
 
 MaterialResource sc::tag_invoke(json::value_to_tag<MaterialResource>,

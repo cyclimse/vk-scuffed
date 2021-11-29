@@ -14,5 +14,5 @@ VKAPI_ATTR VkBool32 VKAPI_CALL DebugCallBack(
 vk::DebugUtilsMessengerCreateInfoEXT GetDebugUtilsMessengerCreateInfoStruct(
     vk::Flags<vk::DebugUtilsMessageSeverityFlagBitsEXT> severity_flags);
 
-bool IsDeviceSuitable(const vk::PhysicalDevice& device,
-                      const vk::SurfaceKHR& surface);
+bool IsDeviceSuitable(const vk::PhysicalDevice device,
+                      const vk::SurfaceKHR surface);

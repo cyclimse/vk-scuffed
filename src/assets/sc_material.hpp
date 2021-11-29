@@ -7,6 +7,7 @@
 #include <unordered_map>
 #include <vector>  // for vector
 #include <vulkan/vulkan.hpp>
+#include <vulkan/vulkan_handles.hpp>
 
 #include "sc_resource.hpp"  // for Resource
 #include "sc_shader.hpp"
@@ -28,10 +29,18 @@ struct MaterialResource : Resource {
   std::vector<std::string> shader_names;
 };
 
-struct Material {
+class Material {
+ public:
+  Material(std::vector<sc::Shader const*>&& shaders,
+           const MaterialResource& resource);
   std::vector<vk::PipelineShaderStageCreateInfo> GetShaderStageCreateInfos()
       const;
-  MaterialResource const resource;
+  vk::UniqueHandle<vk::Pipeline, vk::DispatchLoaderDynamic> pipeline;
+  vk::PipelineLayout pipeline_layout;
+
+ private:
+  std::vector<sc::Shader const*> shaders_;
+  MaterialResource const resource_;
 };
 
 MaterialResource tag_invoke(json::value_to_tag<MaterialResource>,

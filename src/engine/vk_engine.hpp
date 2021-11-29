@@ -8,7 +8,9 @@
 #include <vulkan/vulkan_structs.hpp>
 
 #include "pipeline_factory.hpp"  // for PipelineFactory
+#include "sc_assets.hpp"
 #include "sc_config.hpp"
+#include "sc_material.hpp"
 #include "sc_window.hpp"
 #include "vk_types.hpp"  // for SwapChainFrame, VmaAllocatorPtrDestr...
 
@@ -20,7 +22,8 @@ struct VmaAllocator_T;
 
 class VulkanEngine {
  public:
-  VulkanEngine(sc::Config const *cfg, sc::Window const *window_ptr);
+  VulkanEngine(sc::Config const *cfg, sc::Assets const *assets,
+               sc::Window const *window_ptr);
 #ifdef __SANITIZE_ADDRESS__
   // This looks terrible but seem to be necessary to avoid warning pollution
   // from ASAN with NVIDIA proprietary drivers
@@ -36,10 +39,11 @@ class VulkanEngine {
   void createImageViews();
   void createRenderPass();
   void createDescriptorSetLayout();
-  void createPipelineFactory();
+  void createResources();
   void createPipelines();
 
   sc::Config const *cfg_;
+  sc::Assets const *assets_;
   sc::Window const *window_ptr_;
 
   // Vulkan setup
@@ -67,10 +71,13 @@ class VulkanEngine {
   vk::UniqueHandle<vk::DescriptorSetLayout, vk::DispatchLoaderDynamic>
       uniform_descriptor_set_layout_;
   vk::UniqueHandle<vk::DescriptorSetLayout, vk::DispatchLoaderDynamic>
-      global_decriptor_set_layout_;
+      global_descriptor_set_layout_;
   vk::UniqueHandle<vk::PipelineLayout, vk::DispatchLoaderDynamic>
       pipeline_layout_;
 
   // Pipeline
   PipelineFactory pipeline_factory_;
+
+  std::vector<sc::Shader> shaders_;
+  std::vector<sc::Material> materials_;
 };

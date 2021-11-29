@@ -18,8 +18,20 @@ struct ShaderResource : Resource {
 
 class Shader {
  public:
-  Shader(const vk::Device& device, ShaderResource resource);
+  Shader(const vk::Device device, const vk::DispatchLoaderDynamic& dldi_,
+         const ShaderResource& resource);
   vk::ShaderModuleCreateInfo GetShaderModuleCreateInfo() const;
+  inline const std::string& GetName() const { return resource_.name; }
+  inline vk::ShaderStageFlagBits GetType() const {
+    switch (resource_.type) {
+      case ShaderType::Fragment:
+        return vk::ShaderStageFlagBits::eFragment;
+      case ShaderType::Vertex:
+        return vk::ShaderStageFlagBits::eVertex;
+    }
+    return {};
+  }
+  inline vk::ShaderModule GetModule() const { return module_.get(); }
 
  private:
   vk::UniqueHandle<vk::ShaderModule, vk::DispatchLoaderDynamic> module_;

@@ -3,7 +3,9 @@
 #include <GLFW/glfw3.h>
 #include <vulkan/vulkan_core.h>
 
+#include <algorithm>
 #include <array>
+#include <cstddef>
 #include <cstdint>
 #include <cstdlib>
 #include <optional>
@@ -13,16 +15,22 @@
 #include <string>
 #include <vector>
 #include <vulkan/vulkan.hpp>
+#include <vulkan/vulkan_structs.hpp>
 
+#include "pipeline_factory.hpp"
 #include "queue_family_indices.hpp"
 #include "sc_config.hpp"
+#include "sc_material.hpp"
+#include "sc_shader.hpp"
 #include "sc_window.hpp"
 #include "swap_chain_support.hpp"
+#include "vertex.hpp"
 #include "vk_mem_alloc.h"
 #include "vk_utils.hpp"
 
-VulkanEngine::VulkanEngine(sc::Config const *cfg, sc::Window const *window_ptr)
-    : cfg_{cfg}, window_ptr_(window_ptr) {
+VulkanEngine::VulkanEngine(sc::Config const *cfg, sc::Assets const *assets,
+                           sc::Window const *window_ptr)
+    : cfg_{cfg}, assets_{assets}, window_ptr_(window_ptr) {
   createInstance();
   createSurface();
   pickPhysicalDevice();
@@ -32,7 +40,8 @@ VulkanEngine::VulkanEngine(sc::Config const *cfg, sc::Window const *window_ptr)
   createImageViews();
   createRenderPass();
   createDescriptorSetLayout();
-  createPipelineFactory();
+  createResources();
+  createPipelines();
 }
 
 void VulkanEngine::createInstance() {
@@ -127,9 +136,12 @@ void VulkanEngine::createLogicalDevice() {
 
   vk::PhysicalDeviceFeatures features{};
 
+  vk::PhysicalDeviceVulkan11Features features_11{.shaderDrawParameters = true};
+
   std::vector<const char *> device_extensions{VK_KHR_SWAPCHAIN_EXTENSION_NAME};
 
   vk::DeviceCreateInfo create_info{
+      .pNext = &features_11,
       .queueCreateInfoCount =
           static_cast<std::uint32_t>(queue_create_infos.size()),
       .pQueueCreateInfos = queue_create_infos.data(),
@@ -332,8 +344,63 @@ void VulkanEngine::createDescriptorSetLayout() {
   layout_info.bindingCount = 1u;
   layout_info.pBindings = &global_layout_binding;
 
-  global_decriptor_set_layout_ =
+  global_descriptor_set_layout_ =
       device_->createDescriptorSetLayoutUnique(layout_info, nullptr, dldi_);
 }
 
-void VulkanEngine::createPipelineFactory() {}
+void VulkanEngine::createResources() {
+  shaders_.reserve(assets_->shaders.size());
+  for (auto iter = assets_->shaders.cbegin(); iter != assets_->shaders.cend();
+       iter++) {
+    shaders_.push_back(sc::Shader(device_.get(), dldi_, iter->second));
+  }
+  materials_.reserve(assets_->materials.size());
+  for (auto iter = assets_->materials.cbegin();
+       iter != assets_->materials.cend(); iter++) {
+    std::vector<sc::Shader const *> shader_ptrs{};
+    shader_ptrs.reserve(iter->second.shader_names.size());
+    for (auto &shader_name : iter->second.shader_names) {
+      auto result = std::find_if(shaders_.cbegin(), shaders_.cend(),
+                                 [&](const sc::Shader &shader) {
+                                   return shader.GetName() == shader_name;
+                                 });
+      if (result != shaders_.cend()) {
+        shader_ptrs.push_back(&(*result));
+      }
+    }
+    materials_.push_back(sc::Material(std::move(shader_ptrs), iter->second));
+  }
+}
+
+void VulkanEngine::createPipelines() {
+  std::vector<vk::DescriptorSetLayout> descriptor_set_layouts;
+  descriptor_set_layouts.push_back(uniform_descriptor_set_layout_.get());
+  descriptor_set_layouts.push_back(global_descriptor_set_layout_.get());
+
+  pipeline_layout_ = device_->createPipelineLayoutUnique(
+      vk::PipelineLayoutCreateInfo{
+          .setLayoutCount =
+              static_cast<std::uint32_t>(descriptor_set_layouts.size()),
+          .pSetLayouts = descriptor_set_layouts.data(),
+      },
+      nullptr, dldi_);
+
+  auto description = Vertex::getVertexDescription();
+  vk::PipelineVertexInputStateCreateInfo vertex_input_info{
+      .flags = {},
+      .vertexBindingDescriptionCount = 1u,
+      .pVertexBindingDescriptions = &description.binding,
+      .vertexAttributeDescriptionCount =
+          static_cast<std::uint32_t>(description.attributes.size()),
+      .pVertexAttributeDescriptions = description.attributes.data()
+
+  };
+
+  pipeline_factory_ =
+      PipelineFactory(render_pass_.get(), pipeline_layout_.get(),
+                      vertex_input_info, swap_chain_image_extent_);
+
+  for (auto iter = materials_.begin(); iter != materials_.end(); iter++) {
+    pipeline_factory_.Build(device_.get(), dldi_, *iter);
+  }
+}

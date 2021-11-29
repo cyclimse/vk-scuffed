@@ -3,6 +3,7 @@
 #include <vulkan/vulkan_core.h>
 
 #include <cstdint>
+#include <vulkan/vulkan.hpp>
 #include <vulkan/vulkan_enums.hpp>
 #include <vulkan/vulkan_structs.hpp>
 
@@ -13,10 +14,10 @@ PipelineFactory::PipelineFactory(
     : pass_{pass},
       layout_{layout},
       vertex_input_info_{vertex_input_info},
-      extent_{extent} {};
+      extent_{extent} {}
 
-vk::GraphicsPipelineCreateInfo PipelineFactory::Build(
-    const sc::Material& material) {
+void PipelineFactory::Build(vk::Device device, vk::DispatchLoaderDynamic dldi,
+                            sc::Material& material) {
   vk::PipelineInputAssemblyStateCreateInfo input_assembly{
       .flags = {},
       .topology = vk::PrimitiveTopology::eTriangleList,
@@ -91,7 +92,8 @@ vk::GraphicsPipelineCreateInfo PipelineFactory::Build(
           static_cast<std::uint32_t>(dynamic_state_attachments.size()),
       .pDynamicStates = dynamic_state_attachments.data()};
 
-  auto shader_stages = material.GetShaderStageCreateInfos();
+  std::vector<vk::PipelineShaderStageCreateInfo> shader_stages =
+      material.GetShaderStageCreateInfos();
 
   vk::GraphicsPipelineCreateInfo create_info{
       .flags = {},
@@ -110,5 +112,8 @@ vk::GraphicsPipelineCreateInfo PipelineFactory::Build(
       .renderPass = pass_,
       .subpass = 0};
 
-  return create_info;
+  material.pipeline = std::move(
+      device.createGraphicsPipelineUnique({}, create_info, nullptr, dldi)
+          .value);
+  material.pipeline_layout = layout_;
 }

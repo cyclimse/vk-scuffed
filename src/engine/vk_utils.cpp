@@ -34,8 +34,8 @@ vk::DebugUtilsMessengerCreateInfoEXT GetDebugUtilsMessengerCreateInfoStruct(
                                               .pfnUserCallback = DebugCallBack};
 }
 
-bool IsDeviceSuitable(const vk::PhysicalDevice& device,
-                      const vk::SurfaceKHR& surface) {
+bool IsDeviceSuitable(const vk::PhysicalDevice device,
+                      const vk::SurfaceKHR surface) {
   auto const properties = device.getProperties();
   auto const features = device.getFeatures();
   auto const extensions = device.enumerateDeviceExtensionProperties();

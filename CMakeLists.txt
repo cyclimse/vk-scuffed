@@ -47,6 +47,7 @@ add_custom_command(
   VERBATIM)
 
 find_package(Vulkan REQUIRED)
+find_package(glm REQUIRED)
 find_package(
   Boost 1.69.0
   COMPONENTS json
@@ -69,8 +70,8 @@ target_include_directories(scuffedcraft PRIVATE "libs")
 # avoiding warning pollution from VMA target_precompile_headers(scuffedcraft
 # PRIVATE [["vk_mem_alloc.h"]])
 
-target_link_libraries(scuffedcraft PRIVATE Vulkan::Vulkan Boost::boost glfw)
-
+target_link_libraries(scuffedcraft PRIVATE Vulkan::Vulkan Boost::boost glfw
+                                           glm::glm)
 if(CMAKE_EXPORT_COMPILE_COMMANDS)
   set(CMAKE_CXX_STANDARD_INCLUDE_DIRECTORIES
       ${CMAKE_CXX_IMPLICIT_INCLUDE_DIRECTORIES})
